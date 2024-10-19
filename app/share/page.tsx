@@ -11,6 +11,7 @@ import { LATEST_KEY_VERSION } from "pkg/constants";
 export default function Home() {
   const [text, setText] = useState("");
   const [reads, setReads] = useState(999);
+  const [password, setPassword] = useState("");
 
   const [ttl, setTtl] = useState(7);
   const [ttlMultiplier, setTtlMultiplier] = useState(60 * 60 * 24);
@@ -35,6 +36,7 @@ export default function Home() {
           reads,
           encrypted: toBase58(encrypted),
           iv: toBase58(iv),
+          password: password,
         }),
       }).then((r) => r.json())) as { id: string };
 
@@ -112,10 +114,25 @@ export default function Home() {
                 minLength={1}
                 onChange={(e) => setText(e.target.value)}
                 rows={Math.max(5, text.split("\n").length)}
-                placeholder="DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres"
+                placeholder="Enter a text to be encrypted..."
                 className="w-full p-0 text-base bg-transparent border-0 appearance-none resize-none hover:resize text-zinc-100 placeholder-zinc-500 focus:ring-0 sm:text-sm"
               />
             </div>
+          </pre>
+
+          <pre className="px-4 py-3 mt-4 font-mono text-left bg-transparent border rounded border-zinc-600 focus:border-zinc-100/80 focus:ring-0 sm:text-sm text-zinc-100">
+            <div className="flex items-start px-1 text-sm">
+              <textarea
+                id="password"
+                name="password"
+                value={password}
+                minLength={1}
+                onChange={(e) => setPassword(e.target.value)}
+                rows={Math.max(1, password.split("\n").length)}
+                placeholder="Enter a Password or Passphrase"
+                className="w-full p-0 text-base bg-transparent border-0 appearance-none resize-none hover:resize text-zinc-100 placeholder-zinc-500 focus:ring-0 sm:text-sm"
+              />
+            </div>            
           </pre>
 
           <div className="flex flex-col items-center justify-center w-full gap-4 mt-4 sm:flex-row">

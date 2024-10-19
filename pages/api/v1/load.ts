@@ -11,7 +11,7 @@ export default async function handler(req: NextRequest) {
   const key = ["envshare", id].join(":");
 
   const [data, _] = await Promise.all([
-    await redis.hgetall<{ encrypted: string; remainingReads: number | null; iv: string }>(key),
+    await redis.hgetall<{ encrypted: string; remainingReads: number | null; iv: string; password:string }>(key),
     await redis.incr("envshare:metrics:reads"),
   ]);
   if (!data) {
@@ -28,7 +28,7 @@ export default async function handler(req: NextRequest) {
     remainingReads = await redis.hincrby(key, "remainingReads", -1);
   }
 
-  return NextResponse.json({ iv: data.iv, encrypted: data.encrypted, remainingReads });
+  return NextResponse.json({ iv: data.iv, encrypted: data.encrypted, password: data.password, remainingReads });
 }
 
 export const config = {

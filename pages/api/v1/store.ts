@@ -7,11 +7,12 @@ type Request = {
   ttl?: number;
   reads: number;
   iv: string;
+  password: string;
 };
 
 const redis = Redis.fromEnv();
 export default async function handler(req: NextRequest) {
-  const { encrypted, ttl, reads, iv } = (await req.json()) as Request;
+  const { encrypted, ttl, reads, iv, password } = (await req.json()) as Request;
 
   const id = generateId();
   const key = ["envshare", id].join(":");
@@ -22,6 +23,7 @@ export default async function handler(req: NextRequest) {
     remainingReads: reads > 0 ? reads : null,
     encrypted,
     iv,
+    password,
   });
   if (ttl) {
     tx.expire(key, ttl);

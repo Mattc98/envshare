@@ -9,9 +9,6 @@ export const Stats = asyncComponent(async () => {
     .get("envshare:metrics:reads")
     .get("envshare:metrics:writes")
     .exec<[number, number]>();
-  const stars = await fetch("https://api.github.com/repos/chronark/envshare")
-    .then((res) => res.json())
-    .then((json) => json.stargazers_count as number);
 
   const stats = [
     {
@@ -24,16 +21,10 @@ export const Stats = asyncComponent(async () => {
     },
   ] satisfies { label: string; value: number }[];
 
-  if (stars) {
-    stats.push({
-      label: "GitHub Stars",
-      value: stars,
-    });
-  }
 
   return (
     <section className="container mx-auto">
-      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3 ">
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 ">
         {stats.map(({ label, value }) => (
           <li
             key={label}

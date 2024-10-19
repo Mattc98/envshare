@@ -22,6 +22,7 @@ export default function Unseal() {
   const [remainingReads, setRemainingReads] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [pass, setPass] = useState("");
 
   const onSubmit = async () => {
     try {
@@ -34,6 +35,7 @@ export default function Unseal() {
       }
 
       const { id, encryptionKey, version } = decodeCompositeKey(compositeKey);
+
       const res = await fetch(`/api/v1/load?id=${id}`);
       if (!res.ok) {
         throw new Error(await res.text());
@@ -41,9 +43,14 @@ export default function Unseal() {
       const json = (await res.json()) as {
         iv: string;
         encrypted: string;
+        password: string;
         remainingReads: number | null;
       };
       setRemainingReads(json.remainingReads);
+
+      if(json.password != pass){
+        throw new Error("Wrong password!");
+      }
 
       const decrypted = await decrypt(json.encrypted, encryptionKey, json.iv, version);
 
@@ -142,6 +149,21 @@ export default function Unseal() {
               onChange={(e) => setCompositeKey(e.target.value)}
             />
           </div>
+
+          <pre className="px-4 py-3 mt-4 font-mono text-left bg-transparent border rounded border-zinc-600 focus:border-zinc-100/80 focus:ring-0 sm:text-sm text-zinc-100">
+            <div className="flex items-start px-1 text-sm">
+              <textarea
+                id="pass"
+                name="pass"
+                value={pass}
+                minLength={1}
+                onChange={(e) => setPass(e.target.value)}
+                rows={Math.max(1, pass.split("\n").length)}
+                placeholder="Enter a Password or Passphrase"
+                className="w-full p-0 text-base bg-transparent border-0 appearance-none resize-none hover:resize text-zinc-100 placeholder-zinc-500 focus:ring-0 sm:text-sm"
+              />
+            </div>            
+          </pre>
 
           <button
             type="submit"
