@@ -49,7 +49,7 @@ export default function Unseal() {
       setRemainingReads(json.remainingReads);
 
       if(json.password != pass){
-        throw new Error("Wrong password!");
+        throw new Error("That's the wrong password!");
       }
 
       const decrypted = await decrypt(json.encrypted, encryptionKey, json.iv, version);

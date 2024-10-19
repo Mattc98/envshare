@@ -27,6 +27,10 @@ export default function Home() {
       setLink("");
       setLoading(true);
 
+      if(!password){
+        throw new Error("Enter a password");
+      }
+
       const { encrypted, iv, key } = await encrypt(text);
 
       const { id } = (await fetch("/api/v1/store", {
